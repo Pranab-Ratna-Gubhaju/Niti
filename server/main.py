@@ -22,8 +22,7 @@ api.include_router(chat)
 origins = [
     "http://localhost",   # The address of your front-end app
     "http://localhost:3000",   # If your front-end is running on port 3000
-    "niti-client-cw7szwr5s-daskhas-projects.vercel.app",
-    # "https://niti-client-k22bibij0-daskhas-projects.vercel.app/",
+    "https://niti-client.onrender.com"
 ]
 
 # Add the CORS middleware
