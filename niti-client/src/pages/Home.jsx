@@ -5,77 +5,68 @@ import SessionContext from "../context/session";
 import logo from "../assets/large-logo.png";
 import loader from "../assets/loader.svg";
 import "./Home.css";
-import {useTypewriter, Cursor} from 'react-simple-typewriter';
- 
+import { useTypewriter, Cursor } from 'react-simple-typewriter';
+
 const Home = () => {
   const { setToken, name, setName, setSessionStart } = useContext(
     SessionContext
   );
-  const [formName,setFormname] = useState("")
+  const [formName, setFormname] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  // console.log(name);
 
-  const setGuestName = () => {
+  const setGuestName = async () => {
     setFormname("Guest");
-    setName(formName)
-    setFormname("")
+    setName("Guest"); // Set the name immediately
+    setFormname("");
+    await CREATE_SESSION("Guest"); // Call CREATE_SESSION with the guest name
   };
   
+
   const handleInput = (event) => {
     setFormname(event.target.value);
   };
 
-  const CREATE_SESSION = async () => {
+  const CREATE_SESSION = async (name) => {
     try {
       setLoading(true);
       const response = await connection.post(`/token?name=${name}`);
       const data = response.data ? response.data : undefined;
-      console.log(data);
       const token = data.token ? data.token : undefined;
       const sessionStart = data.session_start;
       setToken(token);
       setName(data.name);
       setSessionStart(sessionStart);
 
-      //Delay for typewriting effect
+      // Delay for typewriting effect
       setTimeout(() => {
         setLoading(false);
         navigate(`chat/${token}`);
-      },3500)//duration
+      }, 3500); // Duration
     } catch (error) {
       setLoading(false);
       console.log(error);
     }
   };
 
-  //     setLoading(false);
-  //     navigate(`chat/${token}`);
-  //   } catch (error) {
-  //     setLoading(false);
-  //     console.log(error);
-  //   }
-  // };
-
   const onSubmit = (event) => {
     event.preventDefault();
     if (formName.length > 0) {
-      setName(formName)
-      setFormname("")
-      CREATE_SESSION();
+      setFormname("");
+      CREATE_SESSION(formName);
     } else {
       setError("Error! Provide Required Credentials");
     }
-   
   };
+
   const [text] = useTypewriter({
     words: ['दैवले जानुन', 'सबैले जानुन |'],
-    // loop: {},
     delaySpeed: 50,
-    typeSpeed:200,
-    deleteSpeed:50,
+    typeSpeed: 200,
+    deleteSpeed: 50,
   });
+
   return (
     <div>
       {loading ? (
@@ -88,14 +79,14 @@ const Home = () => {
             height: "137px",
           }}
         >
-          <div> 
-            <h1 style = {{ margin: '50px' }}>
+          <div>
+            <h1 style={{ margin: '50px' }}>
               नेपालको कानुन {' '}
-              <span style ={{fontWeight: 'bold', color: '#205072'}}>
+              <span style={{ fontWeight: 'bold', color: '#205072' }}>
                 {text}
               </span>
-              <span style={{color:'red'}}>
-                <Cursor cursorStyle='|'/>
+              <span style={{ color: 'red' }}>
+                <Cursor cursorStyle='|' />
               </span>
             </h1>
           </div>
@@ -127,4 +118,3 @@ const Home = () => {
 };
 
 export default Home;
-
